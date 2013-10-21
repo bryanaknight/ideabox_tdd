@@ -1,7 +1,4 @@
-gem 'minitest'
-require 'minitest/autorun'
-require 'minitest/pride'
-require './lib/ideabox/idea'
+require './test/test_helper'
 require './lib/ideabox/idea_store'
 
 class IdeaStoreTest < Minitest::Test
@@ -51,6 +48,22 @@ class IdeaStoreTest < Minitest::Test
     idea = IdeaStore.find(id)
     assert_equal "cocktails", idea.title
     assert_equal "spicy tomato juice with vodka", idea.description
+  end
+
+  def test_attributes_are_editable
+    idea = Idea.new("drink", "tomato juice")
+    IdeaStore.save(idea)
+    assert_equal 0, idea.id
+  end
+
+  def test_delete_an_idea
+    id1 = IdeaStore.save Idea.new("song", "99 bottles of beer")
+    id2 = IdeaStore.save Idea.new("gift", "micky mouse belt")
+    id3 = IdeaStore.save Idea.new("dinner", "cheeseburger with bacon and avocado")
+
+    assert_equal ["song", "gift", "dinner"], IdeaStore.all.map(&:title)
+    IdeaStore.delete(id2)
+    assert_equal ["song", "dinner"], IdeaStore.all.map(&:title)
   end
 
 end
